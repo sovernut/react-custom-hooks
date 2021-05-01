@@ -26,7 +26,7 @@ const useHttp = (applyData) => {
         }
         setIsLoading(false);
       },
-      [],
+      [applyData],
   ) 
 
   return { isLoading, error, sendRequest };
