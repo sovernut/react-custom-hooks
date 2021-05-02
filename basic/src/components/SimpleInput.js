@@ -1,43 +1,35 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 const SimpleInput = (props) => {
-  const inputRef = useRef();
   const [enteredName, setenteredName] = useState(""); // use state you can reset value
-  const [enteredNameIsValid, setenteredNameIsValid] = useState(false);
   const [enteredNameTouched, setenteredNameTouched] = useState(false);
+  const enteredNameIsValid = enteredName.trim() !== "";
+  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
   const nameInputChangeHandler = (event) => {
     setenteredName(event.target.value);
+    // if (event.target.value.trim() !== "") { // using "event.target.value" because state is not set immediatly (it scheduled for change) if using enterdname it will use lastest value
+    //   setenteredNameIsValid(true);
+    //   return;
+    // }
   };
-
-  useEffect(() => {
-    if (enteredNameIsValid) {
-      console.log("entername is valid !!");
-    }
-  }, [enteredNameIsValid]);
 
   const nameInputBlurHandler = (event) => {
     setenteredNameTouched(true);
-    if (enteredName.trim() == "") {
-      setenteredNameIsValid(false);
-      return;
-    }
-  }
+  };
+
   const formSubmissionHandler = (event) => {
     event.preventDefault();
-    setenteredNameTouched(true)
-    if (enteredName.trim() == "") {
-      setenteredNameIsValid(false);
+    setenteredNameTouched(true);
+    if (!enteredNameIsValid) {
       return;
     }
     console.log(enteredName);
-    setenteredNameIsValid(true);
     setenteredName(""); // here useState allow you to reset input
-
+    setenteredNameTouched(false);
     // const enteredValue = inputRef.current.value;
     // inputRef.current.value = '' // this can reset value but not recommended!
     // console.log(enteredValue);
   };
-  const nameInputIsInvalid = !enteredNameIsValid && enteredNameTouched;
 
   const nameInputClasses = !nameInputIsInvalid
     ? "form-control"
@@ -48,7 +40,6 @@ const SimpleInput = (props) => {
       <div className={nameInputClasses}>
         <label htmlFor="name">Your Name</label>
         <input
-          ref={inputRef}
           type="text"
           id="name"
           onChange={nameInputChangeHandler}
