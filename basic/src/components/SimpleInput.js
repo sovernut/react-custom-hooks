@@ -1,30 +1,38 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 const SimpleInput = (props) => {
   const inputRef = useRef();
   const [enteredName, setenteredName] = useState(""); // use state you can reset value
-  const [enteredNameValid, setEnteredNameValid] = useState(true);
+  const [enteredNameValid, setenteredNameValid] = useState(false);
+  const [enteredNameTouched, setenteredNameTouched] = useState(false);
 
   const nameInputChangeHandler = (event) => {
     setenteredName(event.target.value);
   };
 
+  useEffect(() => {
+    if (enteredNameValid) {
+      console.log("entername is valid !!");
+    }
+  }, [enteredNameValid]);
+
   const formSubmissionHandler = (event) => {
     event.preventDefault();
-
+    setenteredNameTouched(true)
     if (enteredName.trim() == "") {
-      setEnteredNameValid(false);
+      setenteredNameValid(false);
       return;
     }
     console.log(enteredName);
-    setEnteredNameValid(true);
+    setenteredNameValid(true);
     setenteredName(""); // here useState allow you to reset input
 
     // const enteredValue = inputRef.current.value;
     // inputRef.current.value = '' // this can reset value but not recommended!
     // console.log(enteredValue);
   };
+  const nameInputIsInvalid = !enteredNameValid && enteredNameTouched;
 
-  const nameInputClasses = enteredNameValid
+  const nameInputClasses = !nameInputIsInvalid
     ? "form-control"
     : "form-control invalid";
 
@@ -39,7 +47,9 @@ const SimpleInput = (props) => {
           onChange={nameInputChangeHandler}
           value={enteredName}
         />
-        {!enteredNameValid && <p className="error-text">Name can't be empty</p>}
+        {nameInputIsInvalid && (
+          <p className="error-text">Name can't be empty</p>
+        )}
       </div>
       <div className="form-actions">
         <button>Submit</button>
